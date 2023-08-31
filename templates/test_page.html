@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MCQ Test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>MCQ Test</h1>
+  <div id="questions">
+    {% for question in questions %}
+      <div class="question" id="question-{{ question.id }}">
+        <h4>{{ question.question }}</h4>
+        <ul>
+          <li><input type="radio" name="question[{{ question.id }}]" value="1"> {{ question.option1 }}</li>
+          <li><input type="radio" name="question[{{ question.id }}]" value="2"> {{ question.option2 }}</li>
+          <li><input type="radio" name="question[{{ question.id }}]" value="3"> {{ question.option3 }}</li>
+          <li><input type="radio" name="question[{{ question.id }}]" value="4"> {{ question.option4 }}</li>
+        </ul>
+        <button type="button" class="mark-for-review">Mark for Review</button>
+      </div>
+    {% endfor %}
+  </div>
+  <div id="controls">
+    <ul>
+      {% for index, question in enumerate(questions) %}
+        <li><a href="#question-{{ question.id }}">{{ index + 1 }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div id="stopwatch"></div>
+  <script>
+    let stopwatch = document.getElementById("stopwatch");
+    let startTime = new Date();
+
+    function tick() {
+      let currentTime = new Date();
+      let timeElapsed = currentTime - startTime;
+      let minutes = Math.floor(timeElapsed / 60000);
+      let seconds = Math.floor((timeElapsed % 60000) / 1000);
+      let milliseconds = Math.floor((timeElapsed % 1000) / 10);
+      stopwatch.innerHTML = `${minutes}:${seconds}.${milliseconds}`;
+    }
+
+    setInterval(tick, 1000);
+  </script>
+  <input type="submit" value="Submit">
+</body>
+</html>
+

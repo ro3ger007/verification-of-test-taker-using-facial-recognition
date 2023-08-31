@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Taker Verification</title>
+    <style>
+        body {
+            background-image: url('https://gumlet.assettype.com/thebridgechronicle%2F2021-02%2Fd097e2de-8327-4b1b-90dd-357d3262bb0a%2Fthebridgechronicle_import_s3fs_public_news_story_cover_images_2cdac_2.jpg?rect=0%2C0%2C747%2C420&format=auto');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+        }
+        .form-container h1 {
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .overlay {
+            position: absolute;
+            border: 2px solid red;
+            box-shadow: 0 0 10px red;
+            pointer-events: none;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        /* Add a style for the hidden input field */
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Test Taker Verification</h1>
+        <form id="verification-form" method="post" action="/verification" enctype="multipart/form-data">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <!-- Add the hidden input field for the captured image -->
+            <input type="file" accept="image/*" capture="camera" name="capturedImage" id="capturedImage">
+            <button type="button" id="start-camera">Start Camera</button>
+            <video id="camera-stream" autoplay playsinline></video>
+            <button type="button" id="capture">Capture Image</button>
+            <button type="submit">Verify</button>
+        </form>
+    </div>
+    <script>
+        const startCameraButton = document.getElementById('start-camera');
+        const cameraStream = document.getElementById('camera-stream');
+        const captureButton = document.getElementById('capture');
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+
+        startCameraButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraStream.srcObject = stream;
+                cameraStream.parentElement.appendChild(overlay); // Add overlay element to parent
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+            }
+        });
+
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = cameraStream.videoWidth;
+            canvas.height = cameraStream.videoHeight;
+            context.drawImage(cameraStream, 0, 0, canvas.width, canvas.height);
+            const imageBlob = canvas.toDataURL('image/png');
+
+            // Store the captured image in the hidden input field
+            const capturedImageInput = document.getElementById('capturedImage');
+            capturedImageInput.value = imageBlob;
+        });
+    </script>
+</body>
+</html>
+
